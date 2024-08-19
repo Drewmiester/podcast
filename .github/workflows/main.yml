@@ -10,6 +10,7 @@ jobs:
         uses: actions/setup-python@v4
         with:  
           python-version: '3.10'
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -17,15 +18,16 @@ jobs:
         
       - name: List files in the workspace
         run: ls -R
-            
+
       - name: Run Feed Generator
         run: python feed.py
+
       - name: Push Repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "Modified Feed"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git diff --quite && git diff --staged --quite || git add .
+          git commit -m "Modified Feed" || echo "No changes to commit"
           git push
